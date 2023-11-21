@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 
@@ -100,6 +101,18 @@ def logistic_regression(X, y, lr, iterations):
     weights = gradient_descent(X, y, weights, lr, iterations)
     return weights
 
+def show_table(df, accuracy, missRate):
+    fig, ax = plt.subplots()
+    ax.axis('tight')
+    ax.axis('off')
+    ax.table(cellText=df.values, colLabels=df.columns, cellLoc = 'center', loc='center')
+
+    # Display accuracy and miss-classification rate below the table
+    plt.text(0.5, -0.05, f'Accuracy: {accuracy:.2f}', ha='center', transform=ax.transAxes)
+    plt.text(0.5, -0.1, f'Miss-classification Rate: {missRate:.2f}', ha='center', transform=ax.transAxes)
+
+    plt.show()
+
 def evaluationMetrics(y_pred, y_test):
 
     truePositives = np.sum(np.where((y_pred == 1) & (y_test == 1), 1, 0))
@@ -118,13 +131,8 @@ def evaluationMetrics(y_pred, y_test):
 
     df = pd.DataFrame(data)
 
-    print('\n')
-    print(df.to_string(index=False))
-    print('\n')
-    print('Accuracy: ', accuracy)
-    print('Miss-classification Rate: ', missRate)
-    print('\n')
-
+    show_table(df, accuracy, missRate)
+    
 def show_feature_importance(weights, feature_names):
     # Exclude the bias term from the weights and flatten the array
     feature_weights = weights.flatten()
@@ -132,10 +140,26 @@ def show_feature_importance(weights, feature_names):
     # Combine weights with their corresponding feature names
     sorted_indices = np.argsort(feature_weights)[::-1]
 
-    # Display the most important features
-    print("Most Important Features:")
-    for idx in sorted_indices[:10]:  # Displaying top 10 features
-        print(f"{feature_names[idx]}: {feature_weights[idx]}")
+    # Prepare data for the top 10 features
+    top_features = feature_names[sorted_indices[:10]]
+    top_weights = feature_weights[sorted_indices[:10]]
+
+    # Create a bar plot
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(top_features, top_weights, color='skyblue')
+    plt.xlabel('Features')
+    plt.ylabel('Weights')
+    plt.title('Top 10 Most Important Features')
+    plt.xticks(rotation=45)
+
+    # Add the weight values on top of the bars
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 2), va='bottom', ha='center')
+
+
+    plt.show()
+
 
 def deployModel(filename, ftNames,lr=0.01, iter=1000):
 
