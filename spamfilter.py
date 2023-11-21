@@ -125,7 +125,6 @@ def evaluationMetrics(y_pred, y_test):
     print('Miss-classification Rate: ', missRate)
     print('\n')
 
-
 def show_feature_importance(weights, feature_names):
     # Exclude the bias term from the weights and flatten the array
     feature_weights = weights.flatten()
@@ -152,8 +151,6 @@ def deployModel(filename, ftNames,lr=0.01, iter=1000):
 
     evaluationMetrics(y_pred, y_test)
     show_feature_importance(weights, ftNames)
-
-
 
 # Main function
 if __name__ == "__main__":
