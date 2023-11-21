@@ -3,6 +3,66 @@ import pandas as pd
 
 
 
+feature_names = np.array([
+    "word_freq_make",
+    "word_freq_address",
+    "word_freq_all",
+    "word_freq_3d",
+    "word_freq_our",
+    "word_freq_over",
+    "word_freq_remove",
+    "word_freq_internet",
+    "word_freq_order",
+    "word_freq_mail",
+    "word_freq_receive",
+    "word_freq_will",
+    "word_freq_people",
+    "word_freq_report",
+    "word_freq_addresses",
+    "word_freq_free",
+    "word_freq_business",
+    "word_freq_email",
+    "word_freq_you",
+    "word_freq_credit",
+    "word_freq_your",
+    "word_freq_font",
+    "word_freq_000",
+    "word_freq_money",
+    "word_freq_hp",
+    "word_freq_hpl",
+    "word_freq_george",
+    "word_freq_650",
+    "word_freq_lab",
+    "word_freq_labs",
+    "word_freq_telnet",
+    "word_freq_857",
+    "word_freq_data",
+    "word_freq_415",
+    "word_freq_85",
+    "word_freq_technology",
+    "word_freq_1999",
+    "word_freq_parts",
+    "word_freq_pm",
+    "word_freq_direct",
+    "word_freq_cs",
+    "word_freq_meeting",
+    "word_freq_original",
+    "word_freq_project",
+    "word_freq_re",
+    "word_freq_edu",
+    "word_freq_table",
+    "word_freq_conference",
+    "char_freq_;",
+    "char_freq_(",
+    "char_freq_[",
+    "char_freq_!",
+    "char_freq_$",
+    "char_freq_#",
+    "capital_run_length_average",
+    "capital_run_length_longest",
+    "capital_run_length_total"
+])
+
 def loadData(filename):
     # Loading the data
     data = pd.read_csv(filename, delimiter=',')
@@ -57,13 +117,28 @@ def evaluationMetrics(y_pred, y_test):
     }
 
     df = pd.DataFrame(data)
-    print(df)
+
+    print('\n')
+    print(df.to_string(index=False))
+    print('\n')
     print('Accuracy: ', accuracy)
     print('Miss-classification Rate: ', missRate)
+    print('\n')
 
-    return 0 # STUB
 
-def deployModel(filename, lr=0.01, iter=1000):
+def show_feature_importance(weights, feature_names):
+    # Exclude the bias term from the weights and flatten the array
+    feature_weights = weights.flatten()
+
+    # Combine weights with their corresponding feature names
+    sorted_indices = np.argsort(feature_weights)[::-1]
+
+    # Display the most important features
+    print("Most Important Features:")
+    for idx in sorted_indices[:10]:  # Displaying top 10 features
+        print(f"{feature_names[idx]}: {feature_weights[idx]}")
+
+def deployModel(filename, ftNames,lr=0.01, iter=1000):
 
     # Load and preprocess the data
     X_train, y_train, X_test, y_test = loadData('spambase.data')
@@ -76,10 +151,11 @@ def deployModel(filename, lr=0.01, iter=1000):
     y_pred = np.where(y_pred > 0.5, 1, -1)
 
     evaluationMetrics(y_pred, y_test)
+    show_feature_importance(weights, ftNames)
 
 
 
 # Main function
 if __name__ == "__main__":
-    deployModel('spambase.data')
+    deployModel('spambase.data', feature_names)
     
